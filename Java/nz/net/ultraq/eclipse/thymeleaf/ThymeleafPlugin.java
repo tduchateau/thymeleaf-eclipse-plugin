@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
  */
 public class ThymeleafPlugin extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "nz.net.ultraq.eclipse.thymeleaf"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "nz.net.ultraq.eclipse.thymeleaf";
 
 	private static final String[] DIALECT_FILES = {
 			"dialects/Standard-Dialect.xml",
