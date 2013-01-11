@@ -20,11 +20,11 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Additional information for Thymeleaf standard attribute processors.
+ * Additional information for Thymeleaf processors.
  * 
  * @author Emanuel Rabina
  */
-public class StandardAttributeContextInformation implements IContextInformation {
+public class ProcessorContextInformation implements IContextInformation {
 
 	/**
 	 * {@inheritDoc}

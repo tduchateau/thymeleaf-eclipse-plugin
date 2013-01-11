@@ -16,8 +16,12 @@
 
 package nz.net.ultraq.eclipse.thymeleaf;
 
-import nz.net.ultraq.eclipse.thymeleaf.contentassist.StandardAttributeCache;
+import nz.net.ultraq.eclipse.thymeleaf.contentassist.ProcessorCache;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -31,8 +35,11 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "nz.net.ultraq.eclipse.thymeleaf"; //$NON-NLS-1$
 
 	private static final String[] DIALECT_FILES = {
-			"nz/net/ultraq/eclipse/thymeleaf/Standard-Dialect.xml"
+			"dialects/Standard-Dialect.xml",
+			"dialects/Layout-Dialect.xml",
 	};
+	private static final String THYMELEAF_ATTRIBUTE_IMAGE = "thymeleaf-attribute-image";
+	private static final String THYMELEAF_ATTRIBUTE_IMAGE_FILENAME = "Thymeleaf-Leaf.png";
 
 	private static ThymeleafPlugin plugin;
 
@@ -47,6 +54,26 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Return the image used for Thymeleaf attributes.
+	 * 
+	 * @return Thymeleaf attribute image.
+	 */
+	public Image getAttributeImage() {
+
+		return plugin.getImageRegistry().get(THYMELEAF_ATTRIBUTE_IMAGE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+
+		super.initializeImageRegistry(reg);
+		reg.put(THYMELEAF_ATTRIBUTE_IMAGE, new ThymeleafImageDescriptor(THYMELEAF_ATTRIBUTE_IMAGE_FILENAME));
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -54,7 +81,7 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 
 		super.start(context);
 
-		StandardAttributeCache.initialize(DIALECT_FILES);
+		ProcessorCache.initialize(DIALECT_FILES);
 		plugin = this;
 	}
 
@@ -66,5 +93,38 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 
 		plugin = null;
 		super.stop(context);
+	}
+
+	/**
+	 * Image descriptor to retrieve Thymeleaf plugin images.
+	 * 
+	 * @author Emanuel Rabina
+	 */
+	private class ThymeleafImageDescriptor extends ImageDescriptor {
+
+		private static final String IMAGE_DIRECTORY = "images/";
+
+		private final String imagefilename;
+
+		/**
+		 * Constructor, set the name of the image to retrieve from the
+		 * resources/images directory.
+		 * 
+		 * @param imagefilename
+		 */
+		private ThymeleafImageDescriptor(String imagefilename) {
+
+			this.imagefilename = imagefilename;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ImageData getImageData() {
+
+			return new ImageData(ThymeleafPlugin.class.getClassLoader().getResourceAsStream(
+					IMAGE_DIRECTORY + imagefilename));
+		}
 	}
 }

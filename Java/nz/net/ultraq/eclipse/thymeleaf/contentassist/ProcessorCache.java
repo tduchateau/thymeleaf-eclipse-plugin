@@ -24,27 +24,33 @@ import nz.net.ultraq.jaxb.XMLReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 /**
  * A basic in-memory store of all the Thymeleaf processors.
  * 
  * @author Emanuel Rabina
  */
-public class StandardAttributeCache {
+public class ProcessorCache {
 
+	private static ArrayList<Dialect> dialects = new ArrayList<>();
 	private static ArrayList<Processor> processors = new ArrayList<>();
 
 	/**
 	 * Retrieve all attribute processors whose names match the given start
 	 * pattern.
 	 * 
-	 * @param pattern Start-of-string pattern to match.
+	 * @param namespaces List of namespaces to filter the results down to.
+	 * @param pattern	 Start-of-string pattern to match.
 	 * @return List of all attribute processors in the standard dialect.
 	 */
-	public static List<AttributeProcessor> getAttributeProcessors(String pattern) {
+	public static List<AttributeProcessor> getAttributeProcessors(List<QName> namespaces, String pattern) {
 
 		ArrayList<AttributeProcessor> attributeprocessors = new ArrayList<>();
 		for (Processor processor: processors) {
-			if (processor instanceof AttributeProcessor && processorMatchesPattern(processor, pattern)) {
+			if (processor instanceof AttributeProcessor &&
+				processorInNamespace(processor, namespaces) &&
+				processorMatchesPattern(processor, pattern)) {
 				attributeprocessors.add((AttributeProcessor)processor);
 			}
 		}
@@ -62,8 +68,10 @@ public class StandardAttributeCache {
 		XMLReader<Dialect> xmlreader = new XMLReader<>(Dialect.class);
 
 		for (String file: files) {
-			Dialect dialect = xmlreader.readXMLData(StandardAttributeCache.class.getClassLoader()
+			Dialect dialect = xmlreader.readXMLData(ProcessorCache.class.getClassLoader()
 					.getResourceAsStream(file));
+
+			dialects.add(dialect);
 
 			// Link the processor with the dialect
 			for (Processor processor: dialect.getProcessors()) {
@@ -71,6 +79,26 @@ public class StandardAttributeCache {
 				processors.add(processor);
 			}
 		}
+	}
+
+	/**
+	 * Checks if the processor's dialect is in the list of given namespaces.
+	 * 
+	 * @param processor
+	 * @param namespaces
+	 * @return <tt>true</tt> if the processor's dialect prefix and namespace are
+	 * 		   listed in the <tt>namespaces</tt> collection.
+	 */
+	private static boolean processorInNamespace(Processor processor, List<QName> namespaces) {
+
+		Dialect dialect = processor.getDialect();
+		for (QName namespace: namespaces) {
+			if (dialect.getPrefix().equals(namespace.getPrefix()) &&
+				dialect.getNamespaceUri().equals(namespace.getNamespaceURI())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

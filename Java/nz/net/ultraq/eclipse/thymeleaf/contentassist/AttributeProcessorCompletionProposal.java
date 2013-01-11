@@ -16,6 +16,8 @@
 
 package nz.net.ultraq.eclipse.thymeleaf.contentassist;
 
+import nz.net.ultraq.eclipse.thymeleaf.ThymeleafPlugin;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -25,17 +27,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * A completion proposal for the Thymeleaf standard attribute processors.
+ * A completion proposal for the Thymeleaf attribute processors.
  * 
  * @author Emanuel Rabina
  */
-public class StandardAttributeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension {
+public class AttributeProcessorCompletionProposal implements ICompletionProposal, ICompletionProposalExtension {
 
+	private final String fullprocessorname;
 	private final String replacementstring;
-	private final int charsentered;
 	private final int cursorposition;
 
-	private final Image image;
 	private final IContextInformation contextinformation;
 	private final String additionalproposalinfo;
 
@@ -45,17 +46,17 @@ public class StandardAttributeCompletionProposal implements ICompletionProposal,
 	 * 
 	 * @param processorprefix
 	 * @param processorname
-	 * @param charsentered
+	 * @param charsentered	  How much of the entire proposal has already been
+	 * 						  entered by the user.
 	 * @param cursorposition
 	 */
-	public StandardAttributeCompletionProposal(String processorprefix, String processorname,
+	public AttributeProcessorCompletionProposal(String processorprefix, String processorname,
 		int charsentered, int cursorposition) {
 
-		this.replacementstring = processorprefix + ":" + processorname;
-		this.charsentered      = charsentered;
+		this.fullprocessorname = processorprefix + ":" + processorname;
+		this.replacementstring = fullprocessorname.substring(charsentered);
 		this.cursorposition    = cursorposition;
 
-		this.image                  = null;
 		this.contextinformation     = null;
 		this.additionalproposalinfo = null;
 	}
@@ -76,8 +77,7 @@ public class StandardAttributeCompletionProposal implements ICompletionProposal,
 	public void apply(IDocument document, char trigger, int offset) {
 
 		try {
-			String replacement = replacementstring.substring(charsentered).substring(offset - cursorposition);
-			document.replace(offset, 0, replacement);
+			document.replace(offset, 0, replacementstring.substring(offset - cursorposition));
 		}
 		catch (BadLocationException ex) {
 			// Do nothing?
@@ -127,7 +127,7 @@ public class StandardAttributeCompletionProposal implements ICompletionProposal,
 	@Override
 	public Image getImage() {
 
-		return image;
+		return ThymeleafPlugin.getDefault().getAttributeImage();
 	}
 
 	/**
@@ -155,8 +155,7 @@ public class StandardAttributeCompletionProposal implements ICompletionProposal,
 	public boolean isValidFor(IDocument document, int offset) {
 
 		try {
-			return replacementstring.substring(charsentered).startsWith(
-					document.get(cursorposition, offset - cursorposition));
+			return replacementstring.startsWith(document.get(cursorposition, offset - cursorposition));
 		}
 		catch (BadLocationException ex) {
 			return false;

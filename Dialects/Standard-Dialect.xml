@@ -19,7 +19,7 @@
 <dialect xmlns="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect Thymeleaf-Dialect.xsd"
-	prefix="th">
+	prefix="th" namespace-uri="http://www.thymeleaf.org">
 
 	<!-- Introduced Thymeleaf attribute processors -->
 	<attribute-processor name="alt-title"/>

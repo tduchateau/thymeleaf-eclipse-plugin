@@ -27,10 +27,15 @@ import org.eclipse.wst.sse.ui.contentassist.CompletionProposalInvocationContext;
 import org.eclipse.wst.sse.ui.contentassist.ICompletionProposalComputer;
 import org.eclipse.wst.sse.ui.internal.contentassist.ContentAssistUtils;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMElement;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 /**
  * Auto-completion proposal generator for the Thymeleaf Standard attribute
@@ -39,7 +44,7 @@ import java.util.List;
  * @author Emanuel Rabina
  */
 @SuppressWarnings("restriction")
-public class StandardAttributeCompletionProposalComputer implements ICompletionProposalComputer {
+public class ProcessorCompletionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * {@inheritDoc}
@@ -49,22 +54,21 @@ public class StandardAttributeCompletionProposalComputer implements ICompletionP
 	public List computeCompletionProposals(CompletionProposalInvocationContext context, IProgressMonitor monitor) {
 
 		ArrayList<ICompletionProposal> proposals = new ArrayList<>();
-		try {
-			// Get the text entered before the cursor of this auto-completion invocation
-			String pattern = getPattern(context.getDocument(), context.getInvocationOffset());
+		Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), context.getInvocationOffset());
 
-			Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), context.getInvocationOffset());
-			if (node instanceof IDOMElement) {
-				List<AttributeProcessor> processors = StandardAttributeCache.getAttributeProcessors(pattern);
-				for (AttributeProcessor processor: processors) {
-					proposals.add(new StandardAttributeCompletionProposal(
-							processor.getDialect().getPrefix(), processor.getName(),
-							pattern.length(), context.getInvocationOffset()));
-				}
+		// Find out which dialects to look up
+		ArrayList<QName> namespaces = getNodeNamespaces(node);
+
+		// Get the text entered before the cursor of this auto-completion invocation
+		String pattern = getPattern(context.getDocument(), context.getInvocationOffset());
+
+		if (node instanceof IDOMElement) {
+			List<AttributeProcessor> processors = ProcessorCache.getAttributeProcessors(namespaces, pattern);
+			for (AttributeProcessor processor: processors) {
+				proposals.add(new AttributeProcessorCompletionProposal(
+						processor.getDialect().getPrefix(), processor.getName(),
+						pattern.length(), context.getInvocationOffset()));
 			}
-		}
-		catch (BadLocationException ex) {
-			// Do nothing, return the empty list of proposals
 		}
 
 		return proposals;
@@ -90,6 +94,33 @@ public class StandardAttributeCompletionProposalComputer implements ICompletionP
 	}
 
 	/**
+	 * Return a list of the namespaces valid at the given node.
+	 * 
+	 * @param node
+	 * @return List of namespaces known to this node.
+	 */
+	private static ArrayList<QName> getNodeNamespaces(Node node) {
+
+		ArrayList<QName> namespaces = new ArrayList<>();
+
+		if (node instanceof Element) {
+			NamedNodeMap attributes = node.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				String name = ((Attr)attributes.item(i)).getName();
+				if (name.startsWith("xmlns:")) {
+					namespaces.add(new QName(((Element)node).getAttribute(name), "", name.substring(6)));
+				}
+			}
+		}
+		Node parent = node.getParentNode();
+		if (parent != null) {
+			namespaces.addAll(getNodeNamespaces(parent));
+		}
+
+		return namespaces;
+	}
+
+	/**
 	 * Return the pattern to match a processor against, if the text before the
 	 * current document position constitutes a processor name.
 	 * 
@@ -97,17 +128,22 @@ public class StandardAttributeCompletionProposalComputer implements ICompletionP
 	 * @param offset
 	 * @return The text entered up to the document offset, if the text could
 	 * 		   constitute a processor name.
-	 * @throws BadLocationException
 	 */
-	private static String getPattern(IDocument document, int offset) throws BadLocationException {
+	private static String getPattern(IDocument document, int offset) {
 
 		// Trace backwards from the cursor until we hit a character that can't be in a processor name
-		int position = offset;
-		int length = 0;
-		while (--position > 0 && isProcessorChar(document.getChar(position))) {
-			length++;
+		try {
+			int position = offset;
+			int length = 0;
+			while (--position > 0 && isProcessorChar(document.getChar(position))) {
+				length++;
+			}
+			return document.get(position + 1, length);
 		}
-		return document.get(position + 1, length);
+		catch (BadLocationException ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
