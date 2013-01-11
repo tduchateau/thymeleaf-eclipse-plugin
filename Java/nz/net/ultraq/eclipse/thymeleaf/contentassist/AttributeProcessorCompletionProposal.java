@@ -77,7 +77,7 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	public void apply(IDocument document, char trigger, int offset) {
 
 		try {
-			document.replace(offset, 0, replacementstring.substring(offset - cursorposition));
+			document.replace(offset, 0, replacementstring.substring(offset - cursorposition) + "=\"\"");
 		}
 		catch (BadLocationException ex) {
 			// Do nothing?
@@ -118,7 +118,7 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	@Override
 	public String getDisplayString() {
 
-		return replacementstring;
+		return fullprocessorname;
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	@Override
 	public Point getSelection(IDocument document) {
 
-		return new Point(cursorposition + replacementstring.length(), 0);
+		return new Point(cursorposition + replacementstring.length() + 2, 0);
 	}
 
 	/**
