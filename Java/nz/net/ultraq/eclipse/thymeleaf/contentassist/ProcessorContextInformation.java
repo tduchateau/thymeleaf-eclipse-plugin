@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
  * Additional information for Thymeleaf processors.
  * 
  * @author Emanuel Rabina
+ * @since 0.2
  */
 public class ProcessorContextInformation implements IContextInformation {
 

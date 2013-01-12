@@ -6,23 +6,20 @@ A plugin for the Eclipse IDE to add auto-completion support for the Thymeleaf
 standard dialect processors in the Eclipse Web Tools Platform HTML source
 editor.
 
- - Current version: 0.1.0, 2013/01/11, 21:30
- - Released: 11 January 2013
+ - Current version: 0.2.0, 2013/01/??, ??:??
+ - Released: ?? January 2013
 
 Note that this plugin is still _very_ beta, so I welcome any feedback and/or bug
 reports, either through the Thymeleaf forum (on this thread: http://forum.thymeleaf.org/Thymeleaf-content-assist-plugin-for-Eclipse-td4025498.html),
 or as issue reports through the GitHub page.
 
 
-Requirements
-------------
+Minimum Requirements
+--------------------
 
- - Java 7
- - Eclipse Juno SR1 (4.2.1) w/ Eclipse Web Tools Platform 3.4.1
-
-The above is what I have developed and tested the plugin against, so can't
-confirm it will work with other configurations.  I'll relax the requirements
-once I create a plugin that actually, you know, _works_ :)
+ - Java 6
+ - Eclipse Indigo SR2 (3.7.2) w/ the Web Tools Platform 3.3.2 (ie: the Java EE
+   Developer bundle)
 
 
 Installation
@@ -50,6 +47,11 @@ processor could go (usually by CTRL+SPACE inside an HTML element).
 Changelog
 ---------
 
+### 0.2.0
+ - Added Eclipse API baseline support to work towards other versions of Eclipse.
+ - Resolved [Issue #1](thymeleaf-eclipse-plugin/issues/1) so the plugin can now
+   work on Java 6, and Eclipse 3.7.2 w/ WTP 3.3.2.
+   
 ### 0.1.0
  - Initial release
 

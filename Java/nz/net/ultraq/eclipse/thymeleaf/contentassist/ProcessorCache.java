@@ -30,11 +30,12 @@ import javax.xml.namespace.QName;
  * A basic in-memory store of all the Thymeleaf processors.
  * 
  * @author Emanuel Rabina
+ * @since 0.2
  */
 public class ProcessorCache {
 
-	private static ArrayList<Dialect> dialects = new ArrayList<>();
-	private static ArrayList<Processor> processors = new ArrayList<>();
+	private static ArrayList<Dialect> dialects = new ArrayList<Dialect>();
+	private static ArrayList<Processor> processors = new ArrayList<Processor>();
 
 	/**
 	 * Retrieve all attribute processors whose names match the given start
@@ -46,7 +47,7 @@ public class ProcessorCache {
 	 */
 	public static List<AttributeProcessor> getAttributeProcessors(List<QName> namespaces, String pattern) {
 
-		ArrayList<AttributeProcessor> attributeprocessors = new ArrayList<>();
+		ArrayList<AttributeProcessor> attributeprocessors = new ArrayList<AttributeProcessor>();
 		for (Processor processor: processors) {
 			if (processor instanceof AttributeProcessor &&
 				processorInNamespace(processor, namespaces) &&
@@ -65,7 +66,7 @@ public class ProcessorCache {
 	 */
 	public static void initialize(String... files) {
 
-		XMLReader<Dialect> xmlreader = new XMLReader<>(Dialect.class);
+		XMLReader<Dialect> xmlreader = new XMLReader<Dialect>(Dialect.class);
 
 		for (String file: files) {
 			Dialect dialect = xmlreader.readXMLData(ProcessorCache.class.getClassLoader()

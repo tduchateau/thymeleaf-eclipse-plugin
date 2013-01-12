@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Thymeleaf Eclipse Plugin
 Bundle-SymbolicName: nz.net.ultraq.eclipse.thymeleaf; singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: nz.net.ultraq.eclipse.thymeleaf.ThymeleafPlugin
 Bundle-Vendor: Emanuel Rabina
 Require-Bundle: org.eclipse.ui,
@@ -12,10 +12,15 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.sse.ui,
  org.eclipse.wst.xml.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: Classes/,
  Resources/,
- Libraries/jaxb-utilities-1.2.2.jar
+ Libraries/activation-1.1.1.jar,
+ Libraries/jaxb-api-2.2.6.jar,
+ Libraries/jaxb-impl-2.2.6.jar,
+ Libraries/jaxb-utilities-1.2.2.jar,
+ Libraries/joda-time-2.1.jar,
+ Libraries/jsr173_api-1.0.jar
 Export-Package: nz.net.ultraq.eclipse.thymeleaf;
   uses:="org.eclipse.jface.resource,
    org.eclipse.ui.plugin,

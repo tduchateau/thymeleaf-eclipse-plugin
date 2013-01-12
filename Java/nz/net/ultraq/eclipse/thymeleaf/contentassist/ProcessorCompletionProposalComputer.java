@@ -42,6 +42,7 @@ import javax.xml.namespace.QName;
  * processors.
  * 
  * @author Emanuel Rabina
+ * @since 0.1
  */
 @SuppressWarnings("restriction")
 public class ProcessorCompletionProposalComputer implements ICompletionProposalComputer {
@@ -53,22 +54,39 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 	@SuppressWarnings("rawtypes")
 	public List computeCompletionProposals(CompletionProposalInvocationContext context, IProgressMonitor monitor) {
 
-		ArrayList<ICompletionProposal> proposals = new ArrayList<>();
-		Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), context.getInvocationOffset());
+		ArrayList<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
-		// Find out which dialects to look up
-		ArrayList<QName> namespaces = getNodeNamespaces(node);
+		try {
+			IDocument document = context.getDocument();
+			int cursorposition = context.getInvocationOffset();
 
-		// Get the text entered before the cursor of this auto-completion invocation
-		String pattern = getPattern(context.getDocument(), context.getInvocationOffset());
+			// Get all the known namespaces for this point in the document
+			Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), cursorposition);
+			ArrayList<QName> namespaces = getNodeNamespaces(node);
 
-		if (node instanceof IDOMElement) {
-			List<AttributeProcessor> processors = ProcessorCache.getAttributeProcessors(namespaces, pattern);
-			for (AttributeProcessor processor: processors) {
-				proposals.add(new AttributeProcessorCompletionProposal(
-						processor.getDialect().getPrefix(), processor.getName(),
-						pattern.length(), context.getInvocationOffset()));
+			// Get the text entered before the cursor of this auto-completion invocation
+			String pattern = getPattern(document, cursorposition);
+
+			// Collect attribute processors if we're in an HTML element
+			if (node instanceof IDOMElement) {
+
+				// Make sure there's some whitespace before new attribute suggestions
+				if (!pattern.isEmpty() || (pattern.isEmpty() && (cursorposition == 0 ||
+						Character.isWhitespace(document.getChar(cursorposition - 1))))) {
+
+					List<AttributeProcessor> processors = ProcessorCache.getAttributeProcessors(namespaces, pattern);
+					for (AttributeProcessor processor: processors) {
+						proposals.add(new AttributeProcessorCompletionProposal(
+								processor.getDialect().getPrefix(), processor.getName(),
+								pattern.length(), cursorposition));
+					}
+				}
+
 			}
+		}
+		catch (BadLocationException ex) {
+			ex.printStackTrace();
+			return null;
 		}
 
 		return proposals;
@@ -101,7 +119,7 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 	 */
 	private static ArrayList<QName> getNodeNamespaces(Node node) {
 
-		ArrayList<QName> namespaces = new ArrayList<>();
+		ArrayList<QName> namespaces = new ArrayList<QName>();
 
 		if (node instanceof Element) {
 			NamedNodeMap attributes = node.getAttributes();
@@ -125,25 +143,20 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 	 * current document position constitutes a processor name.
 	 * 
 	 * @param document
-	 * @param offset
+	 * @param cursorposition
 	 * @return The text entered up to the document offset, if the text could
 	 * 		   constitute a processor name.
+	 * @throws BadLocationException
 	 */
-	private static String getPattern(IDocument document, int offset) {
+	private static String getPattern(IDocument document, int cursorposition) throws BadLocationException {
 
 		// Trace backwards from the cursor until we hit a character that can't be in a processor name
-		try {
-			int position = offset;
-			int length = 0;
-			while (--position > 0 && isProcessorChar(document.getChar(position))) {
-				length++;
-			}
-			return document.get(position + 1, length);
+		int position = cursorposition;
+		int length = 0;
+		while (--position > 0 && isProcessorChar(document.getChar(position))) {
+			length++;
 		}
-		catch (BadLocationException ex) {
-			ex.printStackTrace();
-			return null;
-		}
+		return document.get(position + 1, length);
 	}
 
 	/**

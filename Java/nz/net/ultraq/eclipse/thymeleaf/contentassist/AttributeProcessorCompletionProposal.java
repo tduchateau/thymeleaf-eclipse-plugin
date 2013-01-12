@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Point;
  * A completion proposal for the Thymeleaf attribute processors.
  * 
  * @author Emanuel Rabina
+ * @since 0.1
  */
 public class AttributeProcessorCompletionProposal implements ICompletionProposal, ICompletionProposalExtension {
 
@@ -155,6 +156,8 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	public boolean isValidFor(IDocument document, int offset) {
 
 		try {
+			// Use this proposal if the characters typed since it was suggested still
+			// match the string this proposal will insert into the document
 			return replacementstring.startsWith(document.get(cursorposition, offset - cursorposition));
 		}
 		catch (BadLocationException ex) {

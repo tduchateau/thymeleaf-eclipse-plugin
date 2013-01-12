@@ -29,6 +29,7 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle.
  * 
  * @author Emanuel Rabina
+ * @since 0.2
  */
 public class ThymeleafPlugin extends AbstractUIPlugin {
 
