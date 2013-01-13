@@ -76,8 +76,7 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 
 					List<AttributeProcessor> processors = ProcessorCache.getAttributeProcessors(namespaces, pattern);
 					for (AttributeProcessor processor: processors) {
-						proposals.add(new AttributeProcessorCompletionProposal(
-								processor.getDialect().getPrefix(), processor.getName(),
+						proposals.add(new AttributeProcessorCompletionProposal(processor,
 								pattern.length(), cursorposition));
 					}
 				}

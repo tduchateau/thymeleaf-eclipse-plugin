@@ -22,6 +22,8 @@ import nz.net.ultraq.eclipse.thymeleaf.xml.Processor;
 import nz.net.ultraq.jaxb.XMLReader;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -34,7 +36,6 @@ import javax.xml.namespace.QName;
  */
 public class ProcessorCache {
 
-	private static ArrayList<Dialect> dialects = new ArrayList<Dialect>();
 	private static ArrayList<Processor> processors = new ArrayList<Processor>();
 
 	/**
@@ -72,13 +73,19 @@ public class ProcessorCache {
 			Dialect dialect = xmlreader.readXMLData(ProcessorCache.class.getClassLoader()
 					.getResourceAsStream(file));
 
-			dialects.add(dialect);
-
-			// Link the processor with the dialect
+			// Link the processor with it's dialect
 			for (Processor processor: dialect.getProcessors()) {
 				processor.setDialect(dialect);
 				processors.add(processor);
 			}
+
+			// Ensure processors are in alphabetical order
+			Collections.sort(processors, new Comparator<Processor>() {
+				@Override
+				public int compare(Processor p1, Processor p2) {
+					return p1.getName().compareTo(p2.getName());
+				}
+			});
 		}
 	}
 

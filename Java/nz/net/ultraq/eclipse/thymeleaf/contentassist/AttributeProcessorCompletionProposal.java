@@ -17,6 +17,9 @@
 package nz.net.ultraq.eclipse.thymeleaf.contentassist;
 
 import nz.net.ultraq.eclipse.thymeleaf.ThymeleafPlugin;
+import nz.net.ultraq.eclipse.thymeleaf.xml.AttributeProcessor;
+import nz.net.ultraq.eclipse.thymeleaf.xml.Processor;
+import nz.net.ultraq.eclipse.thymeleaf.xml.ProcessorDocumentation;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -25,6 +28,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+
+import java.util.List;
 
 /**
  * A completion proposal for the Thymeleaf attribute processors.
@@ -38,28 +43,30 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	private final String replacementstring;
 	private final int cursorposition;
 
-	private final IContextInformation contextinformation;
 	private final String additionalproposalinfo;
+	private final IContextInformation contextinformation;
 
 	/**
 	 * Constructor, creates a completion proposal for a Thymeleaf standard
 	 * attribute processor.
 	 * 
-	 * @param processorprefix
-	 * @param processorname
+	 * @param processor		  Attribute processor being proposed.
 	 * @param charsentered	  How much of the entire proposal has already been
 	 * 						  entered by the user.
 	 * @param cursorposition
 	 */
-	public AttributeProcessorCompletionProposal(String processorprefix, String processorname,
+	public AttributeProcessorCompletionProposal(AttributeProcessor processor,
 		int charsentered, int cursorposition) {
 
-		this.fullprocessorname = processorprefix + ":" + processorname;
+		String dialectprefix = processor.getDialect().getPrefix();
+
+		this.fullprocessorname = dialectprefix + ":" + processor.getName();
 		this.replacementstring = fullprocessorname.substring(charsentered);
 		this.cursorposition    = cursorposition;
 
+		this.additionalproposalinfo = processor.isSetDocumentation() ?
+				generateDocumentation(dialectprefix, processor.getDocumentation()) : null;
 		this.contextinformation     = null;
-		this.additionalproposalinfo = null;
 	}
 
 	/**
@@ -87,6 +94,37 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	}
 
 	/**
+	 * Creates the documentation/help text to go alongside this suggestion.
+	 * 
+	 * @param dialectprefix
+	 * @param documentation
+	 * @return Documentation string.
+	 */
+	private static String generateDocumentation(String dialectprefix, ProcessorDocumentation documentation) {
+
+		StringBuilder doctext = new StringBuilder(documentation.getValue());
+
+		// Generate 'see also' text
+		if (documentation.isSetSeeAlso()) {
+			doctext.append("<br/><br/><b>See also:</b> ");
+
+			List<Object> seealsolist = documentation.getSeeAlso();
+			for (int i = 0; i < seealsolist.size(); i++) {
+				String seealso = ((Processor)seealsolist.get(i)).getName();
+				doctext.append(dialectprefix + ":" + ((i < seealsolist.size() - 1) ? seealso + ", " : seealso));
+			}
+		}
+
+		// Generate 'document reference' text
+		if (documentation.isSetDocumentRef()) {
+			doctext.append((documentation.isSetSeeAlso() ? "<br/>" : "<br/><br/>") + "<b>Reference:</b> ");
+			doctext.append(documentation.getDocumentRef());
+		}
+
+		return doctext.toString();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -110,7 +148,7 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 	@Override
 	public int getContextInformationPosition() {
 
-		return 0;
+		return contextinformation == null ? -1 : 0;
 	}
 
 	/**

@@ -37,6 +37,7 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 
 	private static final String[] DIALECT_FILES = {
 			"dialects/Standard-Dialect.xml",
+			"dialects/Spring-Security-Dialect.xml",
 			"dialects/Layout-Dialect.xml",
 	};
 	private static final String THYMELEAF_ATTRIBUTE_IMAGE = "thymeleaf-attribute-image";

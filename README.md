@@ -51,6 +51,10 @@ Changelog
  - Added Eclipse API baseline support to work towards other versions of Eclipse.
  - Resolved [Issue #1](thymeleaf-eclipse-plugin/issues/1) so the plugin can now
    work on Java 6, and Eclipse 3.7.2 w/ WTP 3.3.2.
+ - Fixed some spelling mistakes in the standard attribute processor suggestions,
+   which would insert misspelled processors into your code!  Whoops!
+ - Started work on resolving [Issue #2](thymeleaf-eclipse-plugin/issues/1) by
+   adding some documentation to many of the standard attribute processors.
    
 ### 0.1.0
  - Initial release
