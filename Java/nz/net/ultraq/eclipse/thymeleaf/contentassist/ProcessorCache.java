@@ -32,11 +32,28 @@ import javax.xml.namespace.QName;
  * A basic in-memory store of all the Thymeleaf processors.
  * 
  * @author Emanuel Rabina
- * @since 0.2
  */
 public class ProcessorCache {
 
 	private static ArrayList<Processor> processors = new ArrayList<Processor>();
+
+	/**
+	 * Retrieve the processor with the matching dialect prefix and name.
+	 * 
+	 * @param prefix Dialect prefix.
+	 * @param name	 Name of the processor.
+	 * @return Processor for the given prefix and name, or <tt>null</tt> if no
+	 * 		   processor matches.
+	 */
+	public static Processor getProcessor(String prefix, String name) {
+
+		for (Processor processor: processors) {
+			if (processor.getDialect().getPrefix().equals(prefix) && processor.getName().equals(name)) {
+				return processor;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Retrieve all attribute processors whose names match the given start

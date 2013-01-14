@@ -35,7 +35,6 @@ import java.util.List;
  * A completion proposal for the Thymeleaf attribute processors.
  * 
  * @author Emanuel Rabina
- * @since 0.1
  */
 public class AttributeProcessorCompletionProposal implements ICompletionProposal, ICompletionProposalExtension {
 
@@ -116,9 +115,9 @@ public class AttributeProcessorCompletionProposal implements ICompletionProposal
 		}
 
 		// Generate 'document reference' text
-		if (documentation.isSetDocumentRef()) {
+		if (documentation.isSetReference()) {
 			doctext.append((documentation.isSetSeeAlso() ? "<br/>" : "<br/><br/>") + "<b>Reference:</b> ");
-			doctext.append(documentation.getDocumentRef());
+			doctext.append(documentation.getReference());
 		}
 
 		return doctext.toString();

@@ -18,7 +18,7 @@
 
 <dialect xmlns="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect Thymeleaf-Dialect.xsd"
+	xsi:schemaLocation="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect ../schemas/Thymeleaf-Dialect.xsd"
 	prefix="sec" namespace-uri="http://www.thymeleaf.org/extras/spring-security/">
 
 	<attribute-processor name="authentication"/>

@@ -14,42 +14,26 @@
  * limitations under the License.
  */
 
-package nz.net.ultraq.eclipse.thymeleaf.contentassist;
-
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.swt.graphics.Image;
+package nz.net.ultraq.eclipse.thymeleaf;
 
 /**
- * Additional information for Thymeleaf processors.
+ * Common code between the various processors in this plugin that pick out
+ * Thymeleaf processors from the document.
  * 
  * @author Emanuel Rabina
  */
-public class ProcessorContextInformation implements IContextInformation {
+public abstract class AbstractProcessorComputer {
 
 	/**
-	 * {@inheritDoc}
+	 * Returns whether or not the given character is a valid processor name
+	 * character.
+	 * 
+	 * @param c
+	 * @return <tt>true</tt> if <tt>char</tt> is an alphanumeric character, or
+	 * 		   one of the following symbols: <tt>: - </tt>
 	 */
-	@Override
-	public String getContextDisplayString() {
+	protected static boolean isProcessorChar(char c) {
 
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Image getImage() {
-
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getInformationDisplayString() {
-
-		return null;
+		return Character.isLetterOrDigit(c) || c == ':' || c == '-';
 	}
 }

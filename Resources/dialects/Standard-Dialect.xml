@@ -18,7 +18,7 @@
 
 <dialect xmlns="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect Thymeleaf-Dialect.xsd"
+	xsi:schemaLocation="http://www.ultraq.net.nz/eclipse/thymeleaf-dialect ../schemas/Thymeleaf-Dialect.xsd"
 	prefix="th" namespace-uri="http://www.thymeleaf.org">
 
 
@@ -34,7 +34,7 @@
 	<attribute-processor name="attr">
 		<documentation
 			see-also="attrappend attrprepend"
-			document-ref="Using Thymeleaf section 5 on Setting Attribute Values">
+			reference="Using Thymeleaf section 5 on Setting Attribute Values">
 			<![CDATA[
 			Sets the value of any attribute/s.  Takes a list of comma-separated
 			attribute/expression pairs, eg:<br/>
@@ -50,7 +50,7 @@
 	<attribute-processor name="attrappend">
 		<documentation
 			see-also="attr attrprepend classappend"
-			document-ref="Using Thymeleaf section 5.4 on Appending And Prepending">
+			reference="Using Thymeleaf section 5.4 on Appending And Prepending">
 			<![CDATA[
 			Appends the result of an expression to any attribute/s, eg:<br/>
 			<br/>
@@ -66,7 +66,7 @@
 	<attribute-processor name="attrprepend">
 		<documentation
 			see-also="attr attrappend"
-			document-ref="Using Thymeleaf section 5.4 on Appending And Prepending">
+			reference="Using Thymeleaf section 5.4 on Appending And Prepending">
 			<![CDATA[
 			Prepends the result of an expression to any attribute/s, eg:<br/>
 			<br/>
@@ -82,7 +82,7 @@
 	<attribute-processor name="case">
 		<documentation
 			see-also="switch"
-			document-ref="Using Thymeleaf section 7.2 on Switch Statements">
+			reference="Using Thymeleaf section 7.2 on Switch Statements">
 			<![CDATA[
 			Used together with the <b>th:switch</b> attribute processor, identifies
 			an element to be rendered if its expression matches the result of the
@@ -94,7 +94,7 @@
 	<attribute-processor name="classappend">
 		<documentation
 			see-also="attrappend class"
-			document-ref="Using Thymeleaf section 5.4 on Appending And Prepending">
+			reference="Using Thymeleaf section 5.4 on Appending And Prepending">
 			<![CDATA[
 			Appends the result of an expression to the <b>class</b> attribute, eg:<br/>
 			<br/>
@@ -108,7 +108,7 @@
 
 	<attribute-processor name="each">
 		<documentation
-			document-ref="Using Thymeleaf section 6.2 on Keeping Iteration Status">
+			reference="Using Thymeleaf section 6.2 on Keeping Iteration Status">
 			<![CDATA[
 			Iterates through a collection of objects, repeating each of the child
 			elements for every object in that collection, eg:<br/>
@@ -131,7 +131,7 @@
 	<attribute-processor name="fragment">
 		<documentation
 			see-also="include substituteby"
-			document-ref="Using Thymeleaf section 8.1 on Including Template Fragments">
+			reference="Using Thymeleaf section 8.1 on Including Template Fragments">
 			<![CDATA[
 			Gives a name to sections of your template that are available for inclusion
 			by the <b>th:include</b> and <b>th:substituteby</b> processors.
@@ -142,7 +142,7 @@
 	<attribute-processor name="object">
 		<documentation
 			see-also="with"
-			document-ref="Using Thymeleaf section 4.3 on the asterisk syntax">
+			reference="Using Thymeleaf section 4.3 on the asterisk syntax">
 			<![CDATA[
 			Selects an object so that its methods and properties can be accessed
 			using the shortcut *{...} syntax, eg:<br/>
@@ -157,7 +157,7 @@
 
 	<attribute-processor name="if">
 		<documentation see-also="unless"
-			document-ref="Using Thymeleaf section 7.1 on Simple Conditionals">
+			reference="Using Thymeleaf section 7.1 on Simple Conditionals">
 			<![CDATA[
 			Evaluates an expression that, if true, will cause this element and it's
 			children to be rendered.  If the expression is false, then this element
@@ -168,7 +168,7 @@
 
 	<attribute-processor name="inline">
 		<documentation
-			document-ref="Using Thymeleaf section 11 on Inlining">
+			reference="Using Thymeleaf section 11 on Inlining">
 			<![CDATA[
 			Lets you use expressions directly in your template.<br/>
 			<br/>
@@ -188,7 +188,7 @@
 
 	<attribute-processor name="unless">
 		<documentation see-also="if"
-			document-ref="Using Thymeleaf section 7.1 on Simple Conditionals">
+			reference="Using Thymeleaf section 7.1 on Simple Conditionals">
 			<![CDATA[
 			The opposite of <b>th:if</b>, evaluates an expression that, if false,
 			will cause this element and it's children to be rendered.
@@ -199,7 +199,7 @@
 	<attribute-processor name="include">
 		<documentation
 			see-also="substituteby fragment"
-			document-ref="Using Thymeleaf section 8.1 on Including Template Fragments"><![CDATA[
+			reference="Using Thymeleaf section 8.1 on Including Template Fragments"><![CDATA[
 			Specifies another template and the fragment within that other template
 			to include at this point, eg:<br/>
 			<br/>
@@ -219,7 +219,7 @@
 
 	<attribute-processor name="remove">
 		<documentation
-			document-ref="Using Thymeleaf section 8.2 on Removing Template Fragments">
+			reference="Using Thymeleaf section 8.2 on Removing Template Fragments">
 			<![CDATA[
 			Removes a piece of this template from the final result.<br/>
 			<br/>
@@ -236,7 +236,7 @@
 	<attribute-processor name="substituteby">
 		<documentation
 			see-also="include fragment"
-			document-ref="Using Thymeleaf section 8.1 on Including Template Fragments">
+			reference="Using Thymeleaf section 8.1 on Including Template Fragments">
 			<![CDATA[
 			Similar to <b>th:include</b>, but instead of adding the specified template
 			fragment as a child of this element, it will replace this element with
@@ -248,7 +248,7 @@
 	<attribute-processor name="switch">
 		<documentation
 			see-also="case if"
-			document-ref="Using Thymeleaf section section 7.2 on Switch Statements">
+			reference="Using Thymeleaf section section 7.2 on Switch Statements">
 			<![CDATA[
 			Selects a child element for rendering if the child's <b>th:case</b>
 			expression is an exact match of this processor's expression, eg:<br/>
@@ -269,7 +269,7 @@
 	<attribute-processor name="text">
 		<documentation
 			see-also="utext"
-			document-ref="Using Thymeleaf section 3 on Using Texts">
+			reference="Using Thymeleaf section 3 on Using Texts">
 			<![CDATA[
 			Replaces the text content of this tag with the result of an expression.
 			Performs escaping of any special characters so that the text is valid
@@ -281,7 +281,7 @@
 	<attribute-processor name="utext">
 		<documentation
 			see-also="text"
-			document-ref="Using Thymeleaf section 3.2 on Unescaped Text">
+			reference="Using Thymeleaf section 3.2 on Unescaped Text">
 			<![CDATA[
 			Does the same as <b>th:text</b> except that it doesn't perform any escaping
 			of special characters.  Useful if the replacement text has HTML/XML
@@ -293,7 +293,7 @@
 	<attribute-processor name="with">
 		<documentation
 			see-also="object"
-			document-ref="Using Thymeleaf section 9 on Local Variables">
+			reference="Using Thymeleaf section 9 on Local Variables">
 			<![CDATA[
 			Create one or more local variables scoped to this tag, that can then
 			be referred to by other expressions.  Takes a comma-separated list of
@@ -503,7 +503,13 @@
 	<attribute-processor name="keytype"/>
 	<attribute-processor name="kind"/>
 	<attribute-processor name="label"/>
-	<attribute-processor name="lang"/>
+
+	<attribute-processor name="lang">
+		<documentation see-also="lang-xmllang"><![CDATA[
+			Sets the <b>lang</b> attribute to the result of the expression.
+		]]></documentation>
+	</attribute-processor>
+
 	<attribute-processor name="list"/>
 	<attribute-processor name="longdesc"/>
 	<attribute-processor name="low"/>

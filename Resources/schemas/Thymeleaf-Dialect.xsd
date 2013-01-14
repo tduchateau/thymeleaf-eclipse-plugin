@@ -127,7 +127,7 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="document-ref" type="xsd:string">
+				<xsd:attribute name="reference" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
 							An 'official' document and the section/page within it

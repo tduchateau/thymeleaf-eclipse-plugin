@@ -16,6 +16,7 @@
 
 package nz.net.ultraq.eclipse.thymeleaf.contentassist;
 
+import nz.net.ultraq.eclipse.thymeleaf.AbstractProcessorComputer;
 import nz.net.ultraq.eclipse.thymeleaf.xml.AttributeProcessor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,14 +39,13 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 /**
- * Auto-completion proposal generator for the Thymeleaf Standard attribute
- * processors.
+ * Auto-completion proposal generator for the Thymeleaf processors.
  * 
  * @author Emanuel Rabina
- * @since 0.1
  */
 @SuppressWarnings("restriction")
-public class ProcessorCompletionProposalComputer implements ICompletionProposalComputer {
+public class ProcessorCompletionProposalComputer extends AbstractProcessorComputer
+	implements ICompletionProposalComputer {
 
 	/**
 	 * {@inheritDoc}
@@ -59,9 +59,9 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 		try {
 			IDocument document = context.getDocument();
 			int cursorposition = context.getInvocationOffset();
+			Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), cursorposition);
 
 			// Get all the known namespaces for this point in the document
-			Node node = (Node)ContentAssistUtils.getNodeAt(context.getViewer(), cursorposition);
 			ArrayList<QName> namespaces = getNodeNamespaces(node);
 
 			// Get the text entered before the cursor of this auto-completion invocation
@@ -85,7 +85,6 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 		}
 		catch (BadLocationException ex) {
 			ex.printStackTrace();
-			return null;
 		}
 
 		return proposals;
@@ -156,19 +155,6 @@ public class ProcessorCompletionProposalComputer implements ICompletionProposalC
 			length++;
 		}
 		return document.get(position + 1, length);
-	}
-
-	/**
-	 * Returns whether or not the given character is a valid processor name
-	 * character.
-	 * 
-	 * @param c
-	 * @return <tt>true</tt> if <tt>char</tt> is an alphanumeric character, or
-	 * 		   one of the following symbols: <tt>: - </tt>
-	 */
-	private static boolean isProcessorChar(char c) {
-
-		return Character.isLetterOrDigit(c) || c == ':' || c == '-';
 	}
 
 	/**
