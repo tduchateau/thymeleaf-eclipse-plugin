@@ -47,6 +47,10 @@ processor could go (usually by CTRL+SPACE inside an HTML element).
 Changelog
 ---------
 
+### 0.3.0
+ - Added showing the basic help/documtation appear when hovering over a
+   processor.
+
 ### 0.2.0
  - Added Eclipse API baseline support to work towards other versions of Eclipse.
  - Resolved [Issue #1](thymeleaf-eclipse-plugin/issues/1) so the plugin can now
