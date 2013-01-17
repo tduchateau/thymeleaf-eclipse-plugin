@@ -16,17 +16,21 @@
 
 package nz.net.ultraq.eclipse.thymeleaf.contentassist;
 
-import nz.net.ultraq.eclipse.thymeleaf.xml.AttributeProcessor;
-import nz.net.ultraq.eclipse.thymeleaf.xml.Dialect;
-import nz.net.ultraq.eclipse.thymeleaf.xml.Processor;
-import nz.net.ultraq.jaxb.XMLReader;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJarEntryResource;
+
+import nz.net.ultraq.eclipse.thymeleaf.xml.AttributeProcessor;
+import nz.net.ultraq.eclipse.thymeleaf.xml.Dialect;
+import nz.net.ultraq.eclipse.thymeleaf.xml.Processor;
+import nz.net.ultraq.jaxb.XMLException;
+import nz.net.ultraq.jaxb.XMLReader;
 
 /**
  * A basic in-memory store of all the Thymeleaf processors.
@@ -36,7 +40,8 @@ import javax.xml.namespace.QName;
 public class ProcessorCache {
 
 	private static ArrayList<Processor> processors = new ArrayList<Processor>();
-
+	private static XMLReader<Dialect> xmlreader = new XMLReader<Dialect>(Dialect.class);
+	
 	/**
 	 * Retrieve the processor with the matching dialect prefix and name.
 	 * 
@@ -84,11 +89,9 @@ public class ProcessorCache {
 	 */
 	public static void initialize(String... files) {
 
-		XMLReader<Dialect> xmlreader = new XMLReader<Dialect>(Dialect.class);
-
 		for (String file: files) {
-			Dialect dialect = xmlreader.readXMLData(ProcessorCache.class.getClassLoader()
-					.getResourceAsStream(file));
+			
+			Dialect dialect = xmlreader.readXMLData(ProcessorCache.class.getClassLoader().getResourceAsStream(file));
 
 			// Link the processor with it's dialect
 			for (Processor processor: dialect.getProcessors()) {
@@ -106,6 +109,39 @@ public class ProcessorCache {
 		}
 	}
 
+	/**
+	 * Initialize the processor cache from JAR resources.
+	 * 
+	 * @param jarEntryResources A list of JAR entries describing the dialects and their
+	 * 				processors to store.
+	 * @throws CoreException 
+	 * @throws XMLException 
+	 */
+	public static void initializeFromResources(List<IJarEntryResource> jarEntryResources) throws XMLException, CoreException {
+
+		XMLReader<Dialect> xmlreader = new XMLReader<Dialect>(Dialect.class);
+
+		for (IJarEntryResource jarEntry: jarEntryResources) {
+			
+			// Get default file as stream
+			Dialect dialect = xmlreader.readXMLData(jarEntry.getContents());
+			
+			// Link the processor with it's dialect
+			for (Processor processor: dialect.getProcessors()) {
+				processor.setDialect(dialect);
+				processors.add(processor);
+			}
+
+			// Ensure processors are in alphabetical order
+			Collections.sort(processors, new Comparator<Processor>() {
+				@Override
+				public int compare(Processor p1, Processor p2) {
+					return p1.getName().compareTo(p2.getName());
+				}
+			});
+		}
+	}
+	
 	/**
 	 * Checks if the processor's dialect is in the list of given namespaces.
 	 * 

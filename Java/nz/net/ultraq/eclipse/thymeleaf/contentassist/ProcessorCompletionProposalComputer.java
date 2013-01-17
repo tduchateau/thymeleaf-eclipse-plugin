@@ -69,11 +69,11 @@ public class ProcessorCompletionProposalComputer extends AbstractProcessorComput
 
 			// Collect attribute processors if we're in an HTML element
 			if (node instanceof IDOMElement) {
-
+				
 				// Make sure there's some whitespace before new attribute suggestions
 				if (!pattern.isEmpty() || (pattern.isEmpty() && (cursorposition == 0 ||
 						Character.isWhitespace(document.getChar(cursorposition - 1))))) {
-
+					
 					List<AttributeProcessor> processors = ProcessorCache.getAttributeProcessors(namespaces, pattern);
 					for (AttributeProcessor processor: processors) {
 						proposals.add(new AttributeProcessorCompletionProposal(processor,

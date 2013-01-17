@@ -16,8 +16,20 @@
 
 package nz.net.ultraq.eclipse.thymeleaf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nz.net.ultraq.eclipse.thymeleaf.contentassist.ProcessorCache;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJarEntryResource;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -46,7 +58,7 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static ThymeleafPlugin getDefault() {
@@ -69,7 +81,6 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
-
 		super.initializeImageRegistry(reg);
 		reg.put(THYMELEAF_ATTRIBUTE_IMAGE, new ThymeleafImageDescriptor(THYMELEAF_ATTRIBUTE_IMAGE_FILENAME));
 	}
@@ -79,10 +90,16 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-
 		super.start(context);
 
+		// Until the legacy XML files exist in their respective original JAR, they
+		// still must be kept inside the plugin
 		ProcessorCache.initialize(DIALECT_FILES);
+
+		// Starting dialect scanning
+		List<IJarEntryResource> thymeleafDialects = getDialectDefinitions();
+		ProcessorCache.initializeFromResources(thymeleafDialects);
+		
 		plugin = this;
 	}
 
@@ -127,5 +144,57 @@ public class ThymeleafPlugin extends AbstractUIPlugin {
 			return new ImageData(ThymeleafPlugin.class.getClassLoader().getResourceAsStream(
 					IMAGE_DIRECTORY + imagefilename));
 		}
+	}
+	
+	/**
+	 * <p>
+	 * Scan the current project's dependencies looking for XML file (ending with
+	 * "Dialect.xml").
+	 * <p>
+	 * The return list contains JarEntryResource that will be read by the
+	 * ProcessorCache.
+	 * 
+	 * @return List<IJarEntryResource> A list of XML files corresponding to the
+	 *         definitions of Thymeleaf dialects that exist in the current's
+	 *         project dependencies.
+	 * @throws JavaModelException
+	 * @throws CoreException
+	 */
+	private List<IJarEntryResource> getDialectDefinitions() throws JavaModelException, CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+		List<IJarEntryResource> resources = new ArrayList<IJarEntryResource>();
+		
+		IProject[] projects = root.getProjects();
+
+		// Each project of the workspace is processed
+		for (IProject project : projects) {
+
+			System.out.println("project name: " + project.getName());
+			
+			// Only Java project are scanned
+			// TODO Is that filter really necessary ?
+			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+				
+				IJavaProject javaProject = JavaCore.create(project);
+				IPackageFragment[] packages = javaProject.getPackageFragments();
+				
+				for(IPackageFragment packageFragment : packages){
+					
+					// No need to iterated over java classes, just resources
+					for(Object ob : packageFragment.getNonJavaResources()){
+
+						IJarEntryResource jarEntry = (IJarEntryResource) ob;
+
+						// Resources are filtered by their suffix
+						if(jarEntry.isFile() && jarEntry.getName().endsWith("Dialect.xml")){
+							resources.add(jarEntry);
+						}
+					}
+				}
+			}
+		}
+		
+		return resources;
 	}
 }
